@@ -120,4 +120,138 @@ pub fn print_statement(stmt: &Statement, indent: usize) {
     }
 }
 
+// Wagner de Souza da Silva - 242039882
 
+pub fn print_expression(e: &Expression, indent: usize) {
+    let space = " ".repeat(indent);
+    match e {
+        Expression::CTrue => print!("True"),
+        Expression::CFalse => print!("False"),
+        Expression::CInt => print!("Int"),
+        Expression::CReal => print!("Real"),
+        Expression::CString => print!("String"),
+        Expression::CVoid => print!("Void"),
+        Expression::Var(name) => {
+            print!("{}var {}", space, name);
+        }
+        Expression::FuncCall(name, expr) => {
+            print!("{}(", name);
+            for e in expr {
+                print!("{}", e.name);
+                for (i, ty) in e.types.iter().enumerate() {
+                    print_expression(ty);
+                    if i != e.types.len() - 1 {
+                        print!(", ");
+                    }
+                }
+            }
+            print!(");");
+        }
+        Expression::Add(expr1, expr2) => {
+            print!("{} + {}", expr1, expr2);
+        }
+        Expression::Sub(expr1, expr2) => {
+            print!("{} - {}", expr1, expr2);
+        }
+        Expression::Mul(expr1, expr2) => {
+            print!("{} * {}", expr1, expr2);
+        }
+        Expression::Div(expr1, expr2) => {
+            print!("{} / {}", expr1, expr2);
+        }
+        Expression::And(expr1, expr2) => {
+            print!("{} and {}", expr1, expr2);
+        }
+        Expression::Or(expr1, expr2) => {
+            print!("{} or {}", expr1, expr2);
+        }
+        Expression::Not(expr) => {
+            print!("not {}", expr);
+        }
+        Expression::EQ(expr1, expr2) => {
+            print!("{} eq {}", expr1, expr2);
+        }
+        Expression::NEQ(expr1, expr2) => {
+            print!("{} neq {}", expr1, expr2);
+        }
+        Expression::GT(expr1, expr2) => {
+            print!("{} gt {}", expr1, expr2);
+        }
+        Expression::LT(expr1, expr2) => {
+            print!("{} lt {}", expr1, expr2);
+        }
+        Expression::GTE(expr1, expr2) => {
+            print!("{} gte {}", expr1, expr2);
+        }
+        Expression::LTE(expr1, expr2) => {
+            print!("{} lte {}", expr1, expr2);
+        }
+        Expression::COk(inner) => {
+            print!("Ok(");
+            print_expression(inner);
+            print!(")");
+        }
+        Expression::CErr(inner) => {
+            print!("Err(");
+            print_expression(inner);
+            print!(")");
+        }
+        Expression::CJust(inner) => {
+            print!("Just(");
+            print_expression(inner);
+            print!(")");
+        }
+        Expression::CNothing => print!("Nothing"),
+        Expression::Unwrap(inner) => {
+            print!("unwrap(");
+            print_expression(inner);
+            print!(")");
+        }
+        Expression::IsError(inner) => {
+            print!("is_err(");
+            print_expression(inner);
+            print!(")");
+        }
+        Expression::IsNothing(inner) => {
+            print!("is_nothing(");
+            print_expression(inner);
+            print!(")");
+        }
+        Expression::Propagate(inner) => {
+            print!("propagate(");
+            print_expression(inner);
+            print!(")");
+        }
+        Expression::ListValue(expr) => {
+            print!("ListValue {} ( ", expr);
+            for e in expr {
+                print!("{}", e.name);
+                for (i, ty) in e.types.iter().enumerate() {
+                    print_expression(ty);
+                    if i != e.types.len() - 1 {
+                        print!(", ");
+                    }
+                }
+            }
+            print!(")");
+        }
+        Expression::Constructor(name, expr) => {
+            println!("impl {} {", name);
+            print!("{}fn new(", space);
+            for e in expr {
+                print!("{}: {}", e.name, e.types);
+                for (i, ty) in e.types.iter().enumerate() {
+                    print_expression(ty);
+                    if i != e.types.len() - 1 {
+                        print!(", ");
+                    }
+                }
+            }
+            println!(") -> Self {");
+            for e in expr {
+                println!("{}Self { {} }", indent + 2, e.name);
+            }
+            print!("}");
+        }
+    }
+}
